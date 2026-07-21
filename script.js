@@ -19,12 +19,23 @@ if (text === "") return;
 addMessage(text, "user");
 
 userInput.value = "";
-
-// Fake AI response for now
-setTimeout(() => {
-addMessage("I'm still learning! Soon I'll be connected to my Python brain. 🤖", "ai");
-}, 700);
-}
+  
+// Send message to backend
+fetch("/api/chat", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({ message: text })
+})
+.then(res => res.json())
+.then(data => {
+addMessage(data.reply, "ai");
+})
+.catch(err => {
+addMessage("Oops! Couldn't reach the server. 😅", "ai");
+console.error(err);
+});
 
 sendBtn.addEventListener("click", sendMessage);
 
